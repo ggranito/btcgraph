@@ -6,8 +6,3 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 
 // Use the Play sbt plugin for Play projects
 addSbtPlugin("play" % "sbt-plugin" % "2.1.1")
-
-// Use SASS CSS
-resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases"
-
-addSbtPlugin("net.litola" % "play-sass" % "0.2.0")

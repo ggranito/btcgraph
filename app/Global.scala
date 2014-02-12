@@ -8,7 +8,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 object Global extends play.api.GlobalSettings {
 
   override def onStart(app: play.api.Application) {
-    Akka.system.scheduler.schedule(0.microsecond, 5.minute) {
+    Akka.system.scheduler.schedule(0.microsecond, 15.minute) {
 	  FetchPrices.fetchPrices
 	}  
   }

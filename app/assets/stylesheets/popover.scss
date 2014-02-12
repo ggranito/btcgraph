@@ -1,0 +1,21 @@
+.popover-container {
+  position: absolute;
+  border: 3px solid black;
+  padding: 2px 5px;
+  background-color: white;
+  font-size: 14px;
+  overflow: hidden;
+  z-index: 10;
+
+  table {
+    border-collapse: separate;
+    border-spacing: 5px;
+  }
+  .popover-key {
+    padding-right: 15px;
+  }
+  .popover-value {
+    font-weight: bold;
+    text-align: right;
+  }
+}

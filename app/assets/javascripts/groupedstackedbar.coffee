@@ -3,7 +3,7 @@ class charts.GroupedStackedBarGraph
   constructor: (metadata, mold, dataFun, parentElement) ->
     @parentElement = parentElement
     #padding: internal SVG padding (for axes, etc; use in scales)
-    @padding = 37
+    @padding = 50
     @metadata = metadata
     @mold = mold;
     @firstRender = true;
@@ -20,7 +20,11 @@ class charts.GroupedStackedBarGraph
         @hardRender()), 
       100)
     if @dataFun
-      @refreshData()
+      scheduleRefresh = () =>
+        @refreshData()
+        setTimeout(scheduleRefresh, 10000)
+      scheduleRefresh()
+
     
     
 

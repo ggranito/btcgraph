@@ -27,7 +27,7 @@
             return {
               color : function() {
                 if (!d.color){
-                  d.color = colorGen(Math.random());
+                  d.color = colorGen(d.name);
                 }
                 return d.color;
               },
@@ -70,7 +70,7 @@
           var metadata = {
             xLabel : "Time",
             yLabel : "Price (USD)",
-            type : "grouped"
+            type : "stacked"
           };
           var dataFun = function(callback) {
             d3.json("/data", function(e, d){

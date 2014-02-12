@@ -3,11 +3,121 @@
   <head>
     <title>Cryptocurrency Graph</title>
     <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/d3.v3.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/color.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/strftime.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/pre.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/groupedstackedbar.js")"></script>
+    <script src="@routes.Assets.at("javascripts/widgets.js")"></script>
     <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/template.css")">
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/groupedstackedbargraph.css")">
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/popover.css")">
   </head>
   <body>
     <div class="content">
-      
+      <script type="text/javascript">
+        $(function() {
+          var parent = $("#crypto-graph")[0];
+
+          //definitions
+          //Definitions
+          var colorGen = d3.scale.category20();
+          var mold = function(d) {
+            return {
+              color : function() {
+                if (!d.color){
+                  d.color = colorGen(d.name);
+                }
+                return d.color;
+              },
+              label : function() {
+                return d.name;
+              },
+              values : function() {
+                d.prices.sort(function(a, b) {
+                  return a.time - b.time;
+                });
+                return _.map(d.prices, function(v, index) {
+                  v.x = v.time;
+                  v.x0 = v.time;
+                  if(index+1 < d.prices.length){
+                    v.x1 = d.prices[index+1].time;
+                  }else{
+                    v.x1 = (new Date()).valueOf();
+                  }
+                  v.y = v.price;
+                  v.popover = function() {
+                    a = {};
+                    a[d.name] = "";
+                    a["Price"] = Number(v.price).toFixed(2) + " USD";
+                    a["Time"] =  (new Date(v.time)).strftime("%r %D");
+                    return a;
+                  };
+                  return v;
+                });
+              },
+              total : function() {
+                return d.prices.reduce( function(acc, elt) {return acc + elt.price;}, 0);
+              },
+              popover : function() {
+                a = {};
+                a[this.label()] = this.total();
+                return a;
+              }
+            };
+          };
+          var metadata = {
+            xLabel : "Time",
+            yLabel : "Price (USD)",
+            type : "stacked"
+          };
+          var dataFun = function(callback) {
+            d3.json("/data", function(e, d){
+              separatedData = d.reduce(function(acc, elt){
+                acc.btc.push({time: elt.time, price: elt.btc});
+                acc.msc.push({time: elt.time, price: elt.msc});
+                acc.uno.push({time: elt.time, price: elt.uno});
+                acc.btb.push({time: elt.time, price: elt.btb});
+                acc.ltc.push({time: elt.time, price: elt.ltc});
+                acc.mcx.push({time: elt.time, price: elt.mcx});
+                acc.pts.push({time: elt.time, price: elt.pts});
+                acc.nvc.push({time: elt.time, price: elt.nvc});
+                acc.btg.push({time: elt.time, price: elt.btg});
+                return acc;
+              }, {btc: [], msc:[], uno: [], btb:[], ltc: [], mcx: [], pts: [], nvc: [], btg: []});
+              data = [];
+              data.push({name: "Bitcoin", prices: separatedData.btc});
+              data.push({name: "Mastercoin", prices: separatedData.msc});
+              data.push({name: "UNO", prices: separatedData.uno});
+              data.push({name: "BitBar", prices: separatedData.btb}); 
+              data.push({name: "Litecoin", prices: separatedData.ltc});
+              data.push({name: "MCX", prices: separatedData.mcx});
+              data.push({name: "ProtoShares", prices: separatedData.pts});
+              data.push({name: "Novacoin", prices: separatedData.nvc});
+              data.push({name: "Bitgem", prices: separatedData.btg});
+              callback(data);
+            });
+          };
+          var chart = new charts.GroupedStackedBarGraph(metadata, mold, dataFun, parent);
+          chart.render();
+          $(parent).find(".grouped-stacked-stack").click(function() {
+            chart.transitionToStacked();
+          });
+          $(parent).find(".grouped-stacked-group").click(function() {
+            chart.transitionToGrouped();
+          });
+        });
+      </script>
+
+      <div class="grouped-stacked-bar-graph" id="crypto-graph">
+        <div class="grouped-stacked-stack">
+          Stacked
+        </div>
+        <div class="grouped-stacked-group">
+          Grouped
+        </div>
+      </div>
     </div>
   </body>
 </html>

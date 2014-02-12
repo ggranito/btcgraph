@@ -20,7 +20,11 @@ class charts.GroupedStackedBarGraph
         @hardRender()), 
       100)
     if @dataFun
-      @refreshData()
+      scheduleRefresh = () =>
+        @refreshData()
+        setTimeout(scheduleRefresh, 10000)
+      scheduleRefresh()
+
     
     
 

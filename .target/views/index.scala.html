@@ -15,9 +15,20 @@
     <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/popover.css")">
   </head>
   <body>
-    <div class="content">
+    <div class="content-panel">
       <script type="text/javascript">
         $(function() {
+          var popTable = function(data){
+            var table = $("#data-table");
+            var dataClone = data.slice(0); 
+            $(".data-row").remove();
+            dataClone.sort(function(a, b){return a.time - b.time;});
+            dataClone.forEach(function(d){
+              var tr = $('<tr class="data-row"></tr>')
+            });
+          };
+          
+          
           var parent = $("#crypto-graph")[0];
 
           //definitions
@@ -74,6 +85,7 @@
           };
           var dataFun = function(callback) {
             d3.json("/data", function(e, d){
+              popTable(d);
               separatedData = d.reduce(function(acc, elt){
                 acc.btc.push({time: elt.time, price: elt.btc});
                 acc.msc.push({time: elt.time, price: elt.msc});
@@ -118,6 +130,21 @@
           Grouped
         </div>
       </div>
+    </div>
+    <div class="content-panel">
+      <table id="data-table">
+        <tr>
+          <th>Time</th>
+          <th>Bitcoin</th>
+          <th>Mastercoin</th>
+          <th>UNO</th>
+          <th>MCX</th>
+          <th>Litecoin</th>
+          <th>ProtoShares</th>
+          <th>Novacoin</th>
+          <th>Bitgem</th>
+        </tr>
+      </table>
     </div>
   </body>
 </html>

@@ -15,9 +15,31 @@
     <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/popover.css")">
   </head>
   <body>
-    <div class="content">
+    <div class="content-panel">
       <script type="text/javascript">
         $(function() {
+          var popTable = function(data){
+            var table = $("#data-table");
+            var dataClone = data.slice(0); 
+            $(".data-row").remove();
+            dataClone.sort(function(a, b){return a.time - b.time;});
+            dataClone.forEach(function(d){
+              var tr = $('<tr class="data-row"></tr>');
+              tr.append("<td>"+ (new Date(d.time)).strftime("%I:%M%P %m/%d")+ "</td>");
+              tr.append("<td>"+ Number(d.btc).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.msc).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.uno).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.btb).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.ltc).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.mcx).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.pts).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.nvc).toFixed(2) +" USD</td>");
+              tr.append("<td>"+ Number(d.btg).toFixed(2) +" USD</td>");
+              table.append(tr);
+            });
+          };
+          
+          
           var parent = $("#crypto-graph")[0];
 
           //definitions
@@ -74,6 +96,7 @@
           };
           var dataFun = function(callback) {
             d3.json("/data", function(e, d){
+              popTable(d);
               separatedData = d.reduce(function(acc, elt){
                 acc.btc.push({time: elt.time, price: elt.btc});
                 acc.msc.push({time: elt.time, price: elt.msc});
@@ -118,6 +141,22 @@
           Grouped
         </div>
       </div>
+    </div>
+    <div class="content-panel">
+      <table id="data-table">
+        <tr>
+          <th>Time</th>
+          <th>Bitcoin</th>
+          <th>Mastercoin</th>
+          <th>UNO</th>
+          <th>BitBar</th>
+          <th>Litecoin</th>
+          <th>MCX</th>
+          <th>ProtoShares</th>
+          <th>Novacoin</th>
+          <th>Bitgem</th>
+        </tr>
+      </table>
     </div>
   </body>
 </html>
